@@ -1,12 +1,12 @@
 using System;
 using UnityEngine;
 
-
 public class PlayerTrigger : MonoBehaviour
 {
     [SerializeField] private Animator _animator;
 
-    public event Action<bool> OnSalesAreaCollision;
+    public event Action<bool> OnSalesAreaTrigger;
+    public event Action<GameObject> OnBodyTrigger;
 
     private void OnTriggerEnter(Collider other)
     {
@@ -15,13 +15,14 @@ public class PlayerTrigger : MonoBehaviour
             _animator.SetTrigger("Punch");
         }
 
-    }
-
-    private void OnTriggerStay(Collider other)
-    {
-        if (other.gameObject.CompareTag("SalesArea"))
+        else if (other.gameObject.CompareTag("SalesArea"))
         {
-            OnSalesAreaCollision?.Invoke(true);
+            OnSalesAreaTrigger?.Invoke(true);
+        }
+
+        else if (other.gameObject.CompareTag("Body"))
+        {
+            OnBodyTrigger?.Invoke(other.gameObject);
         }
     }
 
@@ -29,7 +30,7 @@ public class PlayerTrigger : MonoBehaviour
     {
         if (other.gameObject.CompareTag("SalesArea"))
         {
-            OnSalesAreaCollision?.Invoke(false);
+            OnSalesAreaTrigger?.Invoke(false);
         }
     }
 }

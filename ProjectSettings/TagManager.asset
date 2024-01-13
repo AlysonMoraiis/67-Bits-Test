@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Npc
   - Body
+  - SalesArea
   layers:
   - Default
   - TransparentFX

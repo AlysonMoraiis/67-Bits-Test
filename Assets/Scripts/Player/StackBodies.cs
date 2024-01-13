@@ -1,64 +1,90 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class StackBodies : MonoBehaviour
 {
     [SerializeField] private Transform _stackTransform;
-    [SerializeField] private float _bodyHeight = 0.7f;
+    [SerializeField] private float _bodyHeight = 5f;
     [SerializeField] private PlayerTrigger _playerTrigger;
     [SerializeField] private float _depositDelay;
 
-    private List<GameObject> _bodies = new List<GameObject>();
+    private bool _canDeposit;
+
+    private readonly List<GameObject> _bodies = new List<GameObject>();
 
     private void OnEnable()
     {
-        _playerTrigger.OnSalesAreaCollision += DepositBodyOnSalesArea;
+        _playerTrigger.OnSalesAreaTrigger += DepositBodyOnSalesArea;
+        _playerTrigger.OnBodyTrigger += AddToBodiesList;
     }
 
     private void OnDisable()
     {
-        _playerTrigger.OnSalesAreaCollision -= DepositBodyOnSalesArea;
+        _playerTrigger.OnSalesAreaTrigger -= DepositBodyOnSalesArea;
+        _playerTrigger.OnBodyTrigger -= AddToBodiesList;
     }
 
-    private void OnTriggerEnter(Collider other)
+    private void AddToBodiesList(GameObject body)
     {
-        if (other.gameObject.CompareTag("Body"))
-        {
-            Transform bodyTransform = other.transform;
-            bodyTransform.SetParent(transform);
+        _bodies.Add(body.gameObject);
 
-            SetBodyPosition(bodyTransform.gameObject);
-
-            _bodies.Add(other.gameObject);
-        }
+        SetBodyPosition(body.gameObject);
     }
 
     private void SetBodyPosition(GameObject body)
     {
-        float newY = _stackTransform.position.y + _bodyHeight * _bodies.Count;
-        body.transform.localPosition = new Vector3(0f, newY, 0f);
-        body.transform.rotation = Quaternion.Euler(90f, 0f, 0f);
+        body.transform.rotation = Quaternion.Euler(90f, Random.Range(0, 200), transform.rotation.z);
 
         Rigidbody bodyRigidbody = body.GetComponent<Rigidbody>();
         if (bodyRigidbody != null)
         {
             bodyRigidbody.isKinematic = true;
         }
+
+        StartCoroutine(FollowPlayerTransform());
     }
 
     private void DepositBodyOnSalesArea(bool canDeposit)
     {
         if (!canDeposit)
         {
+            _canDeposit = false;
             return;
         }
 
+        _canDeposit = true;
+        
         StartCoroutine(MoveBodyToSalesArea());
     }
 
     private IEnumerator MoveBodyToSalesArea()
     {
-        yield return new WaitForSeconds(_depositDelay);
+        while (_canDeposit && _bodies.Count > 0)
+        {
+            _bodies.Last().transform.parent.gameObject.SetActive(false);
+            _bodies.Remove(_bodies.Last());
+            yield return new WaitForSeconds(_depositDelay);
+        }
+
+        yield return null;
+    }
+
+    private IEnumerator FollowPlayerTransform()
+    {
+        while (true)
+        {
+            for (int i = 0; i < _bodies.Count; i++)
+            {
+                float newY = _stackTransform.position.y + _bodyHeight * i;
+                var position = _stackTransform.transform.position;
+                _bodies[i].transform.position = new Vector3(position.x, newY, position.z);
+                _bodies[i].transform.parent.position = new Vector3(position.x, transform.position.y, position.z);
+            }
+
+            yield return null;
+        }
     }
 }
