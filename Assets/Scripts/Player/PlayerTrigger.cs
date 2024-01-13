@@ -6,6 +6,7 @@ public class PlayerTrigger : MonoBehaviour
     [SerializeField] private Animator _animator;
 
     public event Action<bool> OnSalesAreaTrigger;
+    public event Action<bool> OnShopAreaTrigger;
     public event Action<GameObject> OnBodyTrigger;
 
     private void OnTriggerEnter(Collider other)
@@ -19,6 +20,11 @@ public class PlayerTrigger : MonoBehaviour
         {
             OnSalesAreaTrigger?.Invoke(true);
         }
+        
+        else if (other.gameObject.CompareTag("ShopArea"))
+        {
+            OnShopAreaTrigger?.Invoke(true);
+        }
 
         else if (other.gameObject.CompareTag("Body"))
         {
@@ -31,6 +37,11 @@ public class PlayerTrigger : MonoBehaviour
         if (other.gameObject.CompareTag("SalesArea"))
         {
             OnSalesAreaTrigger?.Invoke(false);
+        }
+        
+        else if (other.gameObject.CompareTag("ShopArea"))
+        {
+            OnShopAreaTrigger?.Invoke(false);
         }
     }
 }

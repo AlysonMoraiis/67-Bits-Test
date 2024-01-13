@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +11,9 @@ public class StackBodies : MonoBehaviour
     [SerializeField] private float _bodyHeight = 5f;
     [SerializeField] private PlayerTrigger _playerTrigger;
     [SerializeField] private float _depositDelay;
+    [SerializeField] private GameData _gameData;
+
+    public event Action OnBodyAction;
 
     private bool _canDeposit;
 
@@ -29,7 +33,13 @@ public class StackBodies : MonoBehaviour
 
     private void AddToBodiesList(GameObject body)
     {
+        if (_bodies.Count >= _gameData.LoadLimit)
+        {
+            return;
+        }
         _bodies.Add(body.gameObject);
+        _gameData.CurrentLoad++;
+        OnBodyAction?.Invoke();
 
         SetBodyPosition(body.gameObject);
     }
@@ -66,6 +76,9 @@ public class StackBodies : MonoBehaviour
         {
             _bodies.Last().transform.parent.gameObject.SetActive(false);
             _bodies.Remove(_bodies.Last());
+            _gameData.Money += _gameData.Npc01Value;
+            _gameData.CurrentLoad--;
+            OnBodyAction?.Invoke();
             yield return new WaitForSeconds(_depositDelay);
         }
 
