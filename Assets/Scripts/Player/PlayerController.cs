@@ -3,8 +3,11 @@ using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField] private CharacterController _controller;
+    [Header("Player Settings")]
     [SerializeField] private float _speed;
+    
+    [Header("References")]
+    [SerializeField] private CharacterController _controller;
     [SerializeField] private Animator _animator;
 
     private Vector3 _directionInput;
@@ -19,7 +22,6 @@ public class PlayerController : MonoBehaviour
     {
         Vector3 movement = new Vector3(_directionInput.x, 0f, _directionInput.y);
         _controller.Move(movement * (Time.deltaTime * _speed));
-
         UpdateAnimator(movement);
     }
 

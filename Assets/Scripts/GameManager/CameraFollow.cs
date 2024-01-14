@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class CameraFollow : MonoBehaviour
 {
+    [Header("Follow Settings")]
     [SerializeField] private Transform _target;
     [SerializeField] private float _smoothTime;
 

@@ -2,9 +2,12 @@ using UnityEngine;
 
 public class Npc : MonoBehaviour
 {
+    [Header("Components")]
     [SerializeField] private CapsuleCollider _capsuleCollider;
     [SerializeField] private Animator _animator;
     [SerializeField] private Rigidbody _hipsRigidbody;
+    
+    [Header("Death Settings")]
     [SerializeField] private float _deathForceMultiplier = 35f;
 
     private void OnTriggerEnter(Collider other)
@@ -18,7 +21,6 @@ public class Npc : MonoBehaviour
     private void HandleDeath(Vector3 playerPosition)
     {
         DisableComponents();
-
         ApplyDeathForce(playerPosition);
     }
 

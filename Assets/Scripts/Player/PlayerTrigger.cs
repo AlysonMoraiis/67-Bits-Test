@@ -3,11 +3,17 @@ using UnityEngine;
 
 public class PlayerTrigger : MonoBehaviour
 {
-    [SerializeField] private Animator _animator;
+    [Header("References")] [SerializeField]
+    private Animator _animator;
+
+    #region Events
 
     public event Action<bool> OnSalesAreaTrigger;
     public event Action<bool> OnShopAreaTrigger;
     public event Action<GameObject> OnBodyTrigger;
+
+    #endregion
+
 
     private void OnTriggerEnter(Collider other)
     {
@@ -20,7 +26,7 @@ public class PlayerTrigger : MonoBehaviour
         {
             OnSalesAreaTrigger?.Invoke(true);
         }
-        
+
         else if (other.gameObject.CompareTag("ShopArea"))
         {
             OnShopAreaTrigger?.Invoke(true);
@@ -38,7 +44,7 @@ public class PlayerTrigger : MonoBehaviour
         {
             OnSalesAreaTrigger?.Invoke(false);
         }
-        
+
         else if (other.gameObject.CompareTag("ShopArea"))
         {
             OnShopAreaTrigger?.Invoke(false);

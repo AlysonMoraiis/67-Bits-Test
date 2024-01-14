@@ -7,16 +7,21 @@ using Random = UnityEngine.Random;
 
 public class StackBodies : MonoBehaviour
 {
+    [Header("Stack Settings")]
     [SerializeField] private Transform _stackTransform;
     [SerializeField] private float _bodyHeight = 5f;
+    [SerializeField] private float _depositDelay = 0.4f;
+
+    [Header("References")]
     [SerializeField] private PlayerTrigger _playerTrigger;
-    [SerializeField] private float _depositDelay;
     [SerializeField] private GameData _gameData;
 
-    public event Action OnBodyAction;
+    #region Events
+    public event Action OnBodyCollect;
+    public event Action OnBodySale;
+    #endregion
 
     private bool _canDeposit;
-
     private readonly List<GameObject> _bodies = new List<GameObject>();
 
     private void OnEnable()
@@ -39,9 +44,21 @@ public class StackBodies : MonoBehaviour
         }
         _bodies.Add(body.gameObject);
         _gameData.CurrentLoad++;
-        OnBodyAction?.Invoke();
+        OnBodyCollect?.Invoke();
 
         SetBodyPosition(body.gameObject);
+    }
+    
+    private void DepositBodyOnSalesArea(bool canDeposit)
+    {
+        if (!canDeposit)
+        {
+            _canDeposit = false;
+            return;
+        }
+
+        _canDeposit = true;
+        StartCoroutine(MoveBodyToSalesArea());
     }
 
     private void SetBodyPosition(GameObject body)
@@ -57,28 +74,19 @@ public class StackBodies : MonoBehaviour
         StartCoroutine(FollowPlayerTransform());
     }
 
-    private void DepositBodyOnSalesArea(bool canDeposit)
-    {
-        if (!canDeposit)
-        {
-            _canDeposit = false;
-            return;
-        }
-
-        _canDeposit = true;
-        
-        StartCoroutine(MoveBodyToSalesArea());
-    }
-
     private IEnumerator MoveBodyToSalesArea()
     {
         while (_canDeposit && _bodies.Count > 0)
         {
             _bodies.Last().transform.parent.gameObject.SetActive(false);
             _bodies.Remove(_bodies.Last());
+            
             _gameData.Money += _gameData.Npc01Value;
             _gameData.CurrentLoad--;
-            OnBodyAction?.Invoke();
+            
+            OnBodySale?.Invoke();
+            OnBodyCollect?.Invoke();
+            
             yield return new WaitForSeconds(_depositDelay);
         }
 
@@ -93,6 +101,7 @@ public class StackBodies : MonoBehaviour
             {
                 float newY = _stackTransform.position.y + _bodyHeight * i;
                 var position = _stackTransform.transform.position;
+                
                 _bodies[i].transform.position = new Vector3(position.x, newY, position.z);
                 _bodies[i].transform.parent.position = new Vector3(position.x, transform.position.y, position.z);
             }
