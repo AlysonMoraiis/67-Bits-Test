@@ -7,22 +7,28 @@ using Random = UnityEngine.Random;
 
 public class StackBodies : MonoBehaviour
 {
-    [Header("Stack Settings")]
-    [SerializeField] private Transform _stackTransform;
+    [Header("Stack Settings")] [SerializeField]
+    private Transform _stackTransform;
+
     [SerializeField] private float _bodyHeight = 5f;
     [SerializeField] private float _depositDelay = 0.4f;
 
-    [Header("References")]
-    [SerializeField] private PlayerTrigger _playerTrigger;
+    [Header("References")] [SerializeField]
+    private PlayerTrigger _playerTrigger;
+
     [SerializeField] private GameData _gameData;
 
+    public float _velocidadeTeste;
+
     #region Events
+
     public event Action OnBodyCollect;
     public event Action OnBodySale;
+
     #endregion
 
     private bool _canDeposit;
-    private readonly List<GameObject> _bodies = new List<GameObject>();
+    private readonly List<Body> _bodies = new List<Body>();
 
     private void OnEnable()
     {
@@ -36,19 +42,20 @@ public class StackBodies : MonoBehaviour
         _playerTrigger.OnBodyTrigger -= AddToBodiesList;
     }
 
-    private void AddToBodiesList(GameObject body)
+    private void AddToBodiesList(Body body)
     {
         if (_bodies.Count >= _gameData.LoadLimit)
         {
             return;
         }
-        _bodies.Add(body.gameObject);
+
+        _bodies.Add(body);
         _gameData.CurrentLoad++;
         OnBodyCollect?.Invoke();
 
-        SetBodyPosition(body.gameObject);
+        SetBodyPosition(body);
     }
-    
+
     private void DepositBodyOnSalesArea(bool canDeposit)
     {
         if (!canDeposit)
@@ -61,17 +68,15 @@ public class StackBodies : MonoBehaviour
         StartCoroutine(MoveBodyToSalesArea());
     }
 
-    private void SetBodyPosition(GameObject body)
+    private void SetBodyPosition(Body body)
     {
-        body.transform.rotation = Quaternion.Euler(90f, Random.Range(0, 200), transform.rotation.z);
-
-        Rigidbody bodyRigidbody = body.GetComponent<Rigidbody>();
+        Rigidbody bodyRigidbody = body.SetRigidbody();
         if (bodyRigidbody != null)
         {
             bodyRigidbody.isKinematic = true;
         }
 
-        StartCoroutine(FollowPlayerTransform());
+        FollowPlayerTransform(body);
     }
 
     private IEnumerator MoveBodyToSalesArea()
@@ -80,33 +85,45 @@ public class StackBodies : MonoBehaviour
         {
             _bodies.Last().transform.parent.gameObject.SetActive(false);
             _bodies.Remove(_bodies.Last());
-            
+
             _gameData.Money += _gameData.Npc01Value;
             _gameData.CurrentLoad--;
-            
+
             OnBodySale?.Invoke();
             OnBodyCollect?.Invoke();
-            
+
             yield return new WaitForSeconds(_depositDelay);
         }
 
         yield return null;
     }
 
-    private IEnumerator FollowPlayerTransform()
+    private void FollowPlayerTransform(Body body)
     {
-        while (true)
+        for (int i = 0; i < _bodies.Count; i++)
         {
-            for (int i = 0; i < _bodies.Count; i++)
+            body.transform.rotation = Quaternion.Euler(90f, Random.Range(0, 200), transform.rotation.z);
+            float newY = _stackTransform.position.y + _bodyHeight * i;
+            var position = _stackTransform.transform.position;
+            body.transform.position = new Vector3(position.x, newY, position.z);
+        }
+    }
+
+    private void Update()
+    {
+        for (int i = 0; i < _bodies.Count; i++)
+        {
+            float newY = _stackTransform.position.y + _bodyHeight * i;
+            var destiny = new Vector3(_stackTransform.transform.position.x, newY, _stackTransform.transform.position.z);
+
+            _bodies[i].SetTargetPosition(destiny);
+            _bodies[i].SetCanFollowTargetPosition(true);
+
+            if (i > 0)
             {
-                float newY = _stackTransform.position.y + _bodyHeight * i;
-                var position = _stackTransform.transform.position;
-                
-                _bodies[i].transform.position = new Vector3(position.x, newY, position.z);
-                _bodies[i].transform.parent.position = new Vector3(position.x, transform.position.y, position.z);
+                _bodies[i].SetSpeedMultiplier(i);
             }
 
-            yield return null;
         }
     }
 }

@@ -10,7 +10,7 @@ public class PlayerTrigger : MonoBehaviour
 
     public event Action<bool> OnSalesAreaTrigger;
     public event Action<bool> OnShopAreaTrigger;
-    public event Action<GameObject> OnBodyTrigger;
+    public event Action<Body> OnBodyTrigger;
 
     #endregion
 
@@ -32,9 +32,9 @@ public class PlayerTrigger : MonoBehaviour
             OnShopAreaTrigger?.Invoke(true);
         }
 
-        else if (other.gameObject.CompareTag("Body"))
+        if (other.gameObject.TryGetComponent(out Body body))
         {
-            OnBodyTrigger?.Invoke(other.gameObject);
+            OnBodyTrigger?.Invoke(body);
         }
     }
 
