@@ -1,14 +1,28 @@
+using System;
 using UnityEngine;
 
 public class Npc : MonoBehaviour
 {
-    [Header("Components")]
-    [SerializeField] private CapsuleCollider _capsuleCollider;
+    [Header("Components")] [SerializeField]
+    private CapsuleCollider _capsuleCollider;
+
     [SerializeField] private Animator _animator;
     [SerializeField] private Rigidbody _hipsRigidbody;
-    
-    [Header("Death Settings")]
-    [SerializeField] private float _deathForceMultiplier = 35f;
+
+    [Header("Death Settings")] [SerializeField]
+    private float _deathForceMultiplier = 35f;
+
+    private void OnEnable()
+    {
+        SetDefaultParameters();
+    }
+
+    private void SetDefaultParameters()
+    {
+        _capsuleCollider.enabled = true;
+        _animator.enabled = true;
+        _hipsRigidbody.isKinematic = false;
+    }
 
     private void OnTriggerEnter(Collider other)
     {

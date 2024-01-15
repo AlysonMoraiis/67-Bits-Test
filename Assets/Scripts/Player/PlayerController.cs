@@ -9,6 +9,8 @@ public class PlayerController : MonoBehaviour
     [Header("References")]
     [SerializeField] private CharacterController _controller;
     [SerializeField] private Animator _animator;
+    
+    private PlayerDirection _playerDirection;
 
     private Vector3 _directionInput;
 
@@ -43,5 +45,23 @@ public class PlayerController : MonoBehaviour
     public void OnMove(InputAction.CallbackContext context)
     {
         _directionInput = context.ReadValue<Vector2>();
+        
+        if (_directionInput.x < 0)
+        {
+            _playerDirection = PlayerDirection.left;
+        }
+        else if (_directionInput.x > 0)
+        {
+            _playerDirection = PlayerDirection.right;
+        }
+        else
+        {
+            _playerDirection = PlayerDirection.forward;
+        }
+    }
+
+    public PlayerDirection GetPlayerDirection()
+    {
+        return _playerDirection;
     }
 }
