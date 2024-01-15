@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class Npc : MonoBehaviour
@@ -6,9 +7,23 @@ public class Npc : MonoBehaviour
     [SerializeField] private CapsuleCollider _capsuleCollider;
     [SerializeField] private Animator _animator;
     [SerializeField] private Rigidbody _hipsRigidbody;
+    [SerializeField] private GameObject _ragdollGameObject;
     
     [Header("Death Settings")]
     [SerializeField] private float _deathForceMultiplier = 35f;
+
+    private void OnEnable()
+    {
+        InitializeRagdoll();
+    }
+
+    private void InitializeRagdoll()
+    {
+        _hipsRigidbody.isKinematic = false;
+        _animator.enabled = true;
+        _capsuleCollider.enabled = true;
+        _ragdollGameObject.transform.position = transform.position;
+    }
 
     private void OnTriggerEnter(Collider other)
     {

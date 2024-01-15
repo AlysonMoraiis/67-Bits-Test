@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _tag: Npc01
   _prefab: {fileID: 5539404160623228521, guid: 6fc08e1e66cba4044bba3b87ae80fc2b, type: 3}
-  _size: 100
+  _size: 400

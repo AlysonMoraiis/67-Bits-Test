@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 public class Body : MonoBehaviour
@@ -42,7 +41,5 @@ public class Body : MonoBehaviour
     {
         _speedMultiplier = _startSpeedMultiplier - (index / 16);
         _speedMultiplier = Mathf.Clamp(_speedMultiplier, 0.25f, 1f);
-        Debug.Log($"{transform.parent.gameObject.name} speed multiplier {index}" );
-        
     }
 }

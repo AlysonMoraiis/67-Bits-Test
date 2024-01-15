@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: GameData
   m_EditorClassIdentifier: 
   LoadLimit: 20
-  UpgradeCost: 5
-  CurrentLoad: 7
-  Money: 0
+  UpgradeCost: 20
+  CurrentLoad: 0
+  Money: 29
   Npc01Value: 1

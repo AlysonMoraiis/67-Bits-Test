@@ -7,9 +7,8 @@ using Random = UnityEngine.Random;
 
 public class StackBodies : MonoBehaviour
 {
-    [Header("Stack Settings")] [SerializeField]
-    private Transform _stackTransform;
-
+    [Header("Stack Settings")] 
+    [SerializeField] private Transform _stackTransform;
     [SerializeField] private float _bodyHeight = 5f;
     [SerializeField] private float _depositDelay = 0.4f;
 
@@ -17,8 +16,6 @@ public class StackBodies : MonoBehaviour
     private PlayerTrigger _playerTrigger;
 
     [SerializeField] private GameData _gameData;
-
-    public float _velocidadeTeste;
 
     #region Events
 
