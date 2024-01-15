@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b0e9219ec18d0474da0021d54d8ccc4a, type: 3}
   m_Name: GameData
   m_EditorClassIdentifier: 
-  LoadLimit: 20
-  UpgradeCost: 20
+  LoadLimit: 15
+  UpgradeCost: 18
   CurrentLoad: 0
-  Money: 29
+  Money: 0
   Npc01Value: 1
