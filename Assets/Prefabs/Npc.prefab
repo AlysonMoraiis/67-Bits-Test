@@ -1707,10 +1707,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _speed: 13
-  _speedMultiplier: 1.2
   _rigidbody: {fileID: 705799042461045342}
-  _sphereCollider: {fileID: 0}
-  _animator: {fileID: 0}
 --- !u!1 &5093533252218002940 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8742008233500340892, guid: 34bea9670b1b546438039b18a354a39b, type: 3}
@@ -1956,6 +1953,7 @@ MonoBehaviour:
   _capsuleCollider: {fileID: 8899951835350911580}
   _animator: {fileID: 1445286754973575424}
   _hipsRigidbody: {fileID: 705799042461045342}
+  _ragdollGameObject: {fileID: 3331947820425536168}
   _deathForceMultiplier: 55
 --- !u!1 &7056835791619908457 stripped
 GameObject:

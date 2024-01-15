@@ -31,6 +31,10 @@ public class ShopArea : MonoBehaviour
     
     private void Start()
     {
+        if (_gameData.UpgradeCost == 0)
+        {
+            _gameData.UpgradeCost = _defaultUpgradeCost;
+        }
         UpdateUpgradeCostText();
     }
 
@@ -100,7 +104,8 @@ public class ShopArea : MonoBehaviour
 
     private void CalculateNewUpgradeCost()
     {
-        _gameData.UpgradeCost = Mathf.RoundToInt(_defaultUpgradeCost * 1.5f);
+        _defaultUpgradeCost = Mathf.RoundToInt(_defaultUpgradeCost * 1.2f);
+        _gameData.UpgradeCost = _defaultUpgradeCost;
 
         UpdateUpgradeCostText();
     }
